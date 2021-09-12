@@ -5,6 +5,7 @@ from flask import Flask, app, request
 from random import random
 import requests
 import json
+import datetime
 
 
 app = create_app('default')
@@ -22,7 +23,8 @@ class VistaRegistro(Resource):
             return content.json()
         else:
             paciente = content.json()
-            paciente['registro'] = request.json['registro']
+            paciente['evento'] = request.json['evento']
+            paciente['fecha'] = request.json['fecha']
             args = (paciente,)
             return json.dumps(paciente)
 
@@ -35,14 +37,18 @@ class VistaMonitor(Resource):
         if content.status_code == 404:
             return "Microservicio :" + str(pto_microservicio) + " no disponible",str(content.json()),404
         elif content.status_code == 500:
+            file = open('diag.txt', 'a')
+            file.write(str(datetime.datetime.now()) + 'Microservicio :'+ str(pto_microservicio) + 'No disponible')
             return "Microservicio :" + str(pto_microservicio) + " no disponible",str(content.json()),500
         elif content.status_code == 200:
-            respuesta = content.json()
-            
-            print(respuesta, type(respuesta))
+            respuesta = content.json()           
             if respuesta == str(ping):
+                file = open('diag.txt', 'a')
+                file.write(str(datetime.datetime.now()) + 'Microservicio :'+ str(pto_microservicio) + 'Disponible')
                 return "Microservicio :" + str(pto_microservicio) + "disponible. Respuesta Ok"
             else:
+                file = open('diag.txt', 'a')
+                file.write(str(datetime.datetime.now() + 'Microservicio :'+ str(pto_microservicio)) + 'No disponible')
                 return "Microservicio :" + str(pto_microservicio) + " no disponible"
         else:
             return "Microservicio :" + str(pto_microservicio) + " no disponible"

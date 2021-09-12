@@ -17,8 +17,6 @@ class VistaEcho(Resource):
     def post(self, ping):
         echo=ping
         args = (echo,)
-        print ("hola")
-        print (echo, json.dumps(echo))
         return json.dumps(echo)
     
 
