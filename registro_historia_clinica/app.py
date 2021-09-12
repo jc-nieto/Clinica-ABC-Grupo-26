@@ -23,7 +23,17 @@ class RegistrarEventoHistoriaClinica(Resource):
             historia_clinica_paciente['fecha'] = request.json['fecha']
             historia_clinica_paciente['evento'] = request.json['evento']
             args = (historia_clinica_paciente,)
-            return json.dumps(historia_clinica_paciente)
+            #Integrar apuntando al endpoint de la plataforma de mensajeria de Juan Jose
+            #requests.post('http://127.0.0.1:5006/paciente/{}/registrareventomensajeria'.format(id_paciente), json=payload)
+            return "llego a registro historia clinica!!!"
+
+class VistaEcho(Resource):
+
+    def post(self, ping):
+        echo = ping
+        args = (echo,)
+        return json.dumps(echo)
 
 
+api.add_resource(VistaEcho, '/ping/<int:ping>')
 api.add_resource(RegistrarEventoHistoriaClinica, '/paciente/<int:id_paciente>/registrarevento')

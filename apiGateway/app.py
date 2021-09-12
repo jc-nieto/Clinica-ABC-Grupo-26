@@ -17,8 +17,7 @@ api = Api(app)
 class VistaRegistro(Resource):
 
     def post(self, id_paciente):
-        content = requests.get('http://127.0.01:5000/paciente/{}'.format(id_paciente))
-
+        content = requests.get('http://127.0.0.1:5002/paciente/{}'.format(id_paciente))
         if content.status_code == 404:
             return content.json()
         else:
@@ -26,7 +25,9 @@ class VistaRegistro(Resource):
             paciente['evento'] = request.json['evento']
             paciente['fecha'] = request.json['fecha']
             args = (paciente,)
-            return json.dumps(paciente)
+            payload = {'evento' : paciente['evento'], 'fecha':paciente['fecha']}
+            r = requests.post('http://127.0.0.1:5004/paciente/{}/registrarevento'.format(id_paciente), json=payload)
+            return r.text
 
 class VistaMonitor(Resource):
 
