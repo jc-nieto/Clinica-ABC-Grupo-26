@@ -24,7 +24,7 @@ def post():
         counter += 1
         print("============================================================")
         print("connnection to endpoint...")
-        res = requests.get(endpoint_url, json=data)
+        res = requests.post(endpoint_url, json=data)
         print("connection success")
         counter = 100
       except Exception as err:
