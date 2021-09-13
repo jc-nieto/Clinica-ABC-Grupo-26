@@ -14,18 +14,13 @@ api = Api(app)
 class RegistrarEventoHistoriaClinica(Resource):
 
     def post(self, id_paciente):
-        content = requests.get('http://127.0.0.1:5000/paciente/{}'.format(id_paciente))
-
-        if content.status_code == 404:
-            return content.json(), 404
-        else:
-            historia_clinica_paciente = content.json()
-            historia_clinica_paciente['fecha'] = request.json['fecha']
-            historia_clinica_paciente['evento'] = request.json['evento']
-            args = (historia_clinica_paciente,)
-            #Integrar apuntando al endpoint de la plataforma de mensajeria de Juan Jose
-            #requests.post('http://127.0.0.1:5006/paciente/{}/registrareventomensajeria'.format(id_paciente), json=payload)
-            return "llego a registro historia clinica!!!"
+        historia_clinica_paciente = {}
+        historia_clinica_paciente['fecha'] = request.json['fecha']
+        historia_clinica_paciente['evento'] = request.json['evento']
+        args = (historia_clinica_paciente,)
+        #Integrar apuntando al endpoint de la plataforma de mensajeria de Juan Jose
+        requests.post('http://127.0.0.1:5000/', json=historia_clinica_paciente)
+        return "llego a registro historia clinica!!!"
 
 class VistaEcho(Resource):
 

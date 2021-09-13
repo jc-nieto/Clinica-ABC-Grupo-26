@@ -7,7 +7,7 @@ import time
 
 app = Flask(__name__)
 
-endpoint_url = "http://localhost:5001"
+endpoint_url = "http://localhost:5001/paciente/4"
 
 @app.route('/')
 def index():  
@@ -24,7 +24,7 @@ def post():
         counter += 1
         print("============================================================")
         print("connnection to endpoint...")
-        res = requests.post('endpoint_url', json=data)
+        res = requests.get(endpoint_url, json=data)
         print("connection success")
         counter = 100
       except Exception as err:
