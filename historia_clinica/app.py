@@ -1,7 +1,7 @@
 from historia_clinica import create_app
 from flask_restful import Api
 from .modelos import db
-from historia_clinica.vistas import VistaPaciente, VistaPacientes
+from historia_clinica.vistas import VistaPaciente, VistaPacientes, VistaPacienteRegistrarEvento
 
 app = create_app('default')
 app_context = app.app_context()
@@ -12,4 +12,5 @@ db.create_all()
 
 api = Api(app)
 api.add_resource(VistaPacientes, '/pacientes')
+api.add_resource(VistaPacienteRegistrarEvento, '/paciente/<int:id_paciente>/registrarevento')
 api.add_resource(VistaPaciente, '/paciente/<int:id_paciente>')

@@ -7,7 +7,7 @@ import time
 
 app = Flask(__name__)
 
-endpoint_url = "http://localhost:5001/paciente/4"
+endpoint_url = "http://localhost:5001/paciente/1/registrarevento"
 
 @app.route('/')
 def index():  
