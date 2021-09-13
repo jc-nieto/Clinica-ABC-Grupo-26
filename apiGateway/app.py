@@ -1,11 +1,16 @@
+import threading
+from typing import Counter
 from requests import status_codes
+from werkzeug.wrappers import response
 from apiGateway import create_app
 from flask_restful import Resource, Api
-from flask import Flask, app, request
+from flask import Flask, app, request, jsonify
 from random import random
 import requests
 import json
-import datetime
+from datetime import datetime
+import time
+from threading import Thread
 
 
 app = create_app('default')
@@ -26,30 +31,26 @@ class VistaRegistro(Resource):
         return r.text
 
 class VistaMonitor(Resource):
-
-
     def post(self, pto_microservicio):
-        ping = int(random())
-        content = requests.post('http://127.0.01:' + str(pto_microservicio) +'/ping/{}'.format(ping))       
-        if content.status_code == 404:
-            return "Microservicio :" + str(pto_microservicio) + " no disponible",str(content.json()),404
-        elif content.status_code == 500:
-            file = open('diag.txt', 'a')
-            file.write(str(datetime.datetime.now()) + 'Microservicio :'+ str(pto_microservicio) + 'No disponible')
-            return "Microservicio :" + str(pto_microservicio) + " no disponible",str(content.json()),500
-        elif content.status_code == 200:
-            respuesta = content.json()           
-            if respuesta == str(ping):
-                file = open('diag.txt', 'a')
-                file.write(str(datetime.datetime.now()) + 'Microservicio :'+ str(pto_microservicio) + 'Disponible')
-                return "Microservicio :" + str(pto_microservicio) + "disponible. Respuesta Ok"
-            else:
-                file = open('diag.txt', 'a')
-                file.write(str(datetime.datetime.now() + 'Microservicio :'+ str(pto_microservicio)) + 'No disponible')
-                return "Microservicio :" + str(pto_microservicio) + " no disponible"
-        else:
-            return "Microservicio :" + str(pto_microservicio) + " no disponible"
-           
+        def call_monitor(port):
+            ping = int(random())
+            endpoint_url = 'http://127.0.0.1:' + str(pto_microservicio) +'/ping/{}'.format(ping)
+            counter = 0
+            while counter < 99:
+                try:
+                    counter += 1
+                    res = requests.post(endpoint_url)
+                    print("ping ok, ", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+                    time.sleep(5)
+                except Exception as err:
+                    print("connection failed, ", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+                    time.sleep(5)
+
+        port_ms = 5003
+        thread = Thread(target=call_monitor, kwargs={'port':port_ms})
+        thread.start() 
+
+        return "Monitor activado"
 
 api.add_resource(VistaRegistro,'/paciente/<int:id_paciente>/registrar')
 api.add_resource(VistaMonitor,'/monitor/<int:pto_microservicio>/check')
